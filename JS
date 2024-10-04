@@ -1,0 +1,90 @@
+
+
+
+// Créer un "raccourci" vers la cible - variable globale
+const la_cible = document.querySelector("#cible");
+
+// Garder trace d'un score
+let score = 0;
+
+// Préparation du cycle de la cible
+let cycle_cible;
+
+// Garder trace de l'état "touchable" de la cible
+let cible_touchable = false;
+
+// Paramètres de jeu (durées, en secondes) :
+const duree_cycle = 3;
+const duree_animation = 0.25;
+
+///////// Préparation des "outils" qui serviront plusieurs fois dans le script - fonctions
+
+function pourcentage_aleatoire() {
+    let resultat = Math.round(Math.random() * 100);
+    return resultat;
+}
+
+///////// Actions
+
+function deplacement_cible() {
+
+// Préparer deux valeurs aléatoires (à l'aide d'un calcul simple)
+let coordonnee_X = pourcentage_aleatoire();
+let coordonnee_Y = pourcentage_aleatoire();
+
+// Appliquer ces deux valeurs comme coordonnées (top, left) de la cible
+//la_cible.style.left = coordonnee_X + "%";
+//la_cible.style.top = coordonnee_Y + "%";
+la_cible.style = "left:" + coordonnee_X + "%; " + "top:" + coordonnee_Y + "%;";
+
+}
+
+function apparition_cible() {
+    // La cible doit devenir opaque
+    la_cible.classList.remove("invisible");
+    cible_touchable = true;
+}
+
+function disparition_cible() {
+    // La cible doit devenir transparente
+    la_cible.classList.add("invisible");
+    cible_touchable = false;
+}
+
+function cible_touchee() {
+   
+    if (!cible_touchable) { // if (cible_touchable == false)
+        return; // On interromp la fonction ici, le fait que la cible soit touchée est annulé
+    }
+    
+    disparition_cible();
+
+    clearInterval(cycle_cible);
+    lancement_cycle_cible();
+
+    // Gestion du score
+
+    score++; // Le score augmente
+
+    document.querySelector("#affichage_score").innerText = "Score : " + score; // L'affichage du score est mis à jour
+
+}
+
+function actions_cible() {
+    deplacement_cible();
+    apparition_cible();        
+    setTimeout(disparition_cible , duree_cycle * 1000);
+}
+
+function lancement_cycle_cible() {
+    cycle_cible = setInterval( actions_cible , (duree_cycle + duree_animation) * 1000 );
+}
+
+///////// Déroulement du jeu
+
+// La cible se déplacera à intervalles réguliers
+actions_cible();
+lancement_cycle_cible();
+
+// La cible sera touchée lorsqu'on réussira à cliquer dessus
+la_cible.onclick = cible_touchee;
